@@ -11,6 +11,14 @@ export class DBService {
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT || '6379'),
     });
+
+    this.client.on('connect', () => {
+      console.log('Connected to Redis');
+    });
+
+    this.client.on('error', err => {
+      console.error('Redis connection error', err);
+    });
   }
 
   async getBulletNumber(): Promise<FiredBullets> {
@@ -31,5 +39,4 @@ export class DBService {
       throw error;
     }
   }
-
 }
