@@ -11,7 +11,7 @@ resource "aws_elasticache_serverless_cache" "db" {
 resource "aws_elasticache_user" "user" {
   user_id       = "${var.app_name}-db-user"
   user_name     = "default"
-  access_string = "on ~app::* +@all"
+  access_string = "on ~${var.app_name}:* +@all"
   engine        = "REDIS"
   passwords     = [random_password.password.result]
 }

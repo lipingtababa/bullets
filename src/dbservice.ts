@@ -28,7 +28,7 @@ export class DBService {
 
   async getBulletNumber(): Promise<FiredBullets> {
     try {
-      const fired_bullets = await this.client.get('fired_bullets');
+      const fired_bullets = await this.client.get(process.env.APP_NAME + ':fired_bullets');
       if (fired_bullets === null) {
         throw new Error('Failed to get bullet number.');
       }
@@ -43,7 +43,7 @@ export class DBService {
 
   async saveBullet(): Promise<void> {
     try {
-      await this.client.incr('fired_bullets');
+      await this.client.incr(process.env.APP_NAME + ':fired_bullets');
     } catch (error) {
       logger.error(`Failed to save bullet: ${error}`);
       throw error;
