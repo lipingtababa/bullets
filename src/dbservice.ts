@@ -11,7 +11,7 @@ export class DBService {
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT || '6379'),
       password: process.env.DB_PASSWORD,
-      username: process.env.APP_NAME,
+      username: "default",
       tls: {
         servername: process.env.DB_HOST
       }

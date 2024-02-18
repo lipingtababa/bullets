@@ -10,16 +10,16 @@ resource "aws_elasticache_serverless_cache" "db" {
 
 resource "aws_elasticache_user" "user" {
   user_id       = "${var.app_name}-db-user"
-  user_name     = "${var.app_name}"
+  user_name     = "default"
   access_string = "on ~app::* +@all"
-  engine        = "redis"
-  passwords     = random_password.password.result
+  engine        = "REDIS"
+  passwords     = [random_password.password.result]
 }
 
 resource "aws_elasticache_user_group" "db_users" {
   user_group_id = "${var.app_name}-db-users"
   user_ids      = [aws_elasticache_user.user.user_id]
-  engine        = "redis"
+  engine        = "REDIS"
 }
 
 resource "aws_security_group" "db" {

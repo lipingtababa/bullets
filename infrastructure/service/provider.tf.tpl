@@ -1,8 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "lipingtababa-tf-statefiles"
-    // Eveery app has its own statefile.
-    key    = "$APP_NAME/service/terraform.tfstate"
+    key    = "APP_NAME_PLACEHOLDER/service/terraform.tfstate"
     region = "us-east-1"
     dynamodb_table = "lipingtababa-terraform-lock-table"
   }
