@@ -15,7 +15,7 @@ resource "aws_ecs_task_definition" "the_task_definition" {
       memory    = 512,
       essential = true,
       healthCheck = {
-        command     = ["CMD-SHELL", "curl -f http://localhost:81/ping || exit 1"]
+        command     = ["CMD-SHELL", "curl -f http://localhost:8081/ping || exit 1"]
         interval    = 30
         timeout     = 5
         retries     = 3
