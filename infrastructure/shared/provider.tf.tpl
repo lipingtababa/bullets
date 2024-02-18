@@ -4,6 +4,6 @@ terraform {
     // Eveery app has its own statefile.
     key    = "$APP_NAME/shared/terraform.tfstate"
     region = "us-east-1"
-    dynamodb_table = "$APP_NAME-terraform-lock-table"
+    dynamodb_table = "lipingtababa-terraform-lock-table"
   }
 }
