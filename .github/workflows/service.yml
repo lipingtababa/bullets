@@ -57,7 +57,7 @@ jobs:
 
       - name: Update infrastructure and service
         run: |
-          cd infrastructure/aws
+          cd infrastructure
           envsubst <  provider.tf.tpl >provider.tf
           terraform init
           terraform destroy -auto-approve 
