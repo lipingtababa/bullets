@@ -10,10 +10,15 @@ export class DBService {
     this.client = new Redis({
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT || '6379'),
+      password: process.env.DB_PASSWORD,
+      username: process.env.APP_NAME,
+      tls: {
+        servername: process.env.DB_HOST
+      }
     });
 
     this.client.on('connect', () => {
-      console.log('Connected to Redis');
+      console.log('Redis connection established.');
     });
 
     this.client.on('error', err => {
@@ -24,7 +29,12 @@ export class DBService {
   async getBulletNumber(): Promise<FiredBullets> {
     try {
       const fired_bullets = await this.client.get('fired_bullets');
-      return {fired_bullets: Number(fired_bullets)};
+      if (fired_bullets === null) {
+        throw new Error('Failed to get bullet number.');
+      }
+      else {
+        return {fired_bullets: parseInt(fired_bullets)};
+      }
     } catch (error) {
       logger.error(`Failed to get bullet number: ${error}`);
       throw error;

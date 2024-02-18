@@ -5,6 +5,21 @@ resource "aws_elasticache_serverless_cache" "db" {
   major_engine_version      = "7"
   security_group_ids        = [aws_security_group.db.id]
   subnet_ids                = local.subnet_ids
+  user_group_id            = aws_elasticache_user_group.db_users.id
+}
+
+resource "aws_elasticache_user" "user" {
+  user_id       = "${var.app_name}-db-user"
+  user_name     = "${var.app_name}"
+  access_string = "on ~app::* +@all"
+  engine        = "redis"
+  passwords     = random_password.password.result
+}
+
+resource "aws_elasticache_user_group" "db_users" {
+  user_group_id = "${var.app_name}-db-users"
+  user_ids      = [aws_elasticache_user.user.user_id]
+  engine        = "redis"
 }
 
 resource "aws_security_group" "db" {

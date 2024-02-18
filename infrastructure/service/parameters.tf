@@ -13,7 +13,7 @@ resource "aws_ssm_parameter" "db_port" {
 resource "aws_ssm_parameter" "db_password" {
   name  = "/${var.app_name}/db/password"
   type  = "SecureString"
-  value = "no-password-at-this-moment"
+  value = random_password.password.result
 }
 
 resource "aws_ssm_parameter" "lb_address_parameter" {
