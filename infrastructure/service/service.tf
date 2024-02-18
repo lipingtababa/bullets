@@ -105,7 +105,7 @@ resource "aws_ecs_service" "the_ecs_service" {
     assign_public_ip = true
   }
 
-  desired_count = 1
+  desired_count = 3
 
   deployment_controller {
     type = "ECS"

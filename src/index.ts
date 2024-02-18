@@ -52,7 +52,10 @@ businessApp.post('/api/v1/player/fired_bullet', (_: Request, res: Response) => {
 const healthcheckFunction =  (req: Request, res: Response) => {
     res.json({
         status: "success",
-        message: `Server ${process.env.APP_NAME}:${process.env.APP_VERSION} running in ${process.env.AWS_REGION}.`
+        app_name: process.env.APP_NAME,
+        app_version: process.env.APP_VERSION,
+        aws_region: process.env.AWS_REGION,
+        stage: process.env.STAGE
     });
 }
 businessApp.get('/ping', healthcheckFunction);
