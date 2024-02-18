@@ -1,0 +1,60 @@
+{
+  "name": "credit",
+  "version": "0.1",
+  "description": "Account Overview Service",
+  "type": "module",
+  "repository": "https://github.com/lipingtababa/credit",
+  "author": "Ma Chi <hellomarch@gmail.com>",
+  "license": "GPL-2.0",
+  "engines": {
+    "node": ">=18.3.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node --trace-warnings dist/src/index.js",
+    "lint": "swagger-cli validate openapi.yaml; eslint . --ext .ts",
+    "test": "jest dist/test/**/*.test.js",
+    "clean": "rm -rf dist node_modules"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ],
+      "@babel/preset-typescript"
+    ]
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1550.0",
+    "axios": "^1.6.7",
+    "esm": "^3.2.25",
+    "express": "^4.18.2",
+    "ioredis": "^5.3.2",
+    "os": "^0.1.2",
+    "path": "^0.12.7",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.23.9",
+    "@babel/preset-typescript": "^7.23.3",
+    "@jest/globals": "^29.7.0",
+    "@types/aws-sdk": "^2.7.0",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.16",
+    "@types/supertest": "^6.0.2",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4",
+    "swagger-cli": "^4.0.4",
+    "typescript": "^5.3.3"
+  }
+}

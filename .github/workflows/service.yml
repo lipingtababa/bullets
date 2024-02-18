@@ -1,0 +1,78 @@
+name: Provision service
+run-name: Provisioning ${{ github.repository }}
+permissions:
+    id-token: write
+    contents: read
+on: 
+  # Deploy ECS cluster, ECS service and dependencies(DB) for an environment    
+  push:
+    branches:
+      - main
+env:
+  AWS_REGION: us-east-1
+  AWS_ACCOUNT: 339713007259
+  STAGE: dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v4
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: "arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/github-actions-admin"
+          role-session-name: github
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: linting and unit testing
+        run: |
+          echo "Running unit tests"
+          yarn install
+          yarn lint
+
+      - name: Prepare environment
+        run: |
+          echo ${{ env.AWS_REGION }}
+          echo ${{ env.AWS_ACCOUNT }}
+          echo ${{ env.STAGE }}
+
+          # set environment variables for the next steps
+          APP_NAME=`echo ${{ github.repository }} | cut -d'/' -f2`
+          echo "APP_NAME=${APP_NAME}"
+          echo "APP_NAME=${APP_NAME}" >> $GITHUB_ENV
+
+          APP_VERSION=`echo ${{ github.sha }} | cut -c1-7`
+          echo "APP_VERSION=${APP_VERSION}"
+          echo "APP_VERSION=${APP_VERSION}" >> $GITHUB_ENV
+
+      - name: push image to ECR
+        run: |
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          docker build -t ${{ env.APP_NAME }} .
+          docker tag ${{ env.APP_NAME }}:latest ${{ env.AWS_ACCOUNT }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
+          docker push                           ${{ env.AWS_ACCOUNT }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
+
+      - name: Update infrastructure and service
+        run: |
+          cd infrastructure/aws
+          envsubst <  provider.tf.tpl >provider.tf
+          terraform init
+          terraform destroy -auto-approve 
+          # terraform apply -auto-approve \
+          terraform destroy -auto-approve 
+                -var "aws_region=${{ env.AWS_REGION }}" \
+                -var "aws_account=${{ env.AWS_ACCOUNT }}" \
+                -var "stage=${{ env.STAGE}}" \
+                -var "app_version=${{ env.APP_VERSION }}" \
+                -var "app_name=${{ env.APP_NAME }}"
+
+      - name: run e2e test suite
+        run: |
+          # wait for 4 minites for the service to be up
+          sleep 240
+          echo "Running e2e tests"
+          yarn build
+          yarn test

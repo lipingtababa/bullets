@@ -1,0 +1,35 @@
+openapi: 3.0.0
+info:
+  title: Bullet API
+  version: 0.1.0
+  description: Accept bullets and return the number of bullets fired
+servers:
+  - url: http://magong.se/bullets/
+    description: temp server
+paths:
+  /api/v1/player/fired_bullets:
+    get:
+      summary: Get number of the fired bullets in total
+      responses:
+        '200':
+          description: Successfully retrieved the number of fired bullets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fired_bullets:
+                    type: number
+                    description: Number of fired bullets
+        '500':
+          description: Internal server error
+  /api/v1/player/fired_bullet:
+    post:
+      summary: Add a new fired bullet. Request body will be ignored.
+      responses:
+        '201':
+          description: Successfully added a new fired bullet
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
