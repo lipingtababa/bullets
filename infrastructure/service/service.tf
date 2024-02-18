@@ -31,13 +31,13 @@ resource "aws_ecs_task_definition" "the_task_definition" {
       },
       portMappings = [
         {
-          containerPort = 80,
-          hostPort      = 80,
+          containerPort = 8080,
+          hostPort      = 8080,
           protocol      = "tcp"
         },
         {
-          containerPort = 81,
-          hostPort      = 81,
+          containerPort = 8081,
+          hostPort      = 8081,
           protocol      = "tcp"
         }
       ],
@@ -73,8 +73,8 @@ resource "aws_security_group" "the_service_sg" {
   vpc_id      = local.vpc_id
 
   ingress {
-    from_port   = 80
-    to_port     = 81
+    from_port   = 8080
+    to_port     = 8081
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -96,7 +96,7 @@ resource "aws_ecs_service" "the_ecs_service" {
   load_balancer {
     target_group_arn = aws_lb_target_group.tg.arn
     container_name   = "web"
-    container_port   = 80
+    container_port   = 8080
   }
 
   network_configuration {

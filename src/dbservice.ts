@@ -9,7 +9,7 @@ export class DBService {
   constructor() {
     this.client = new Redis({
       host: process.env.DB_HOST,
-      port: 6379,
+      port: parseInt(process.env.DB_PORT || '6379'),
     });
   }
 
