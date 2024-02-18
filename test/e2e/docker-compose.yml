@@ -1,13 +1,26 @@
 version: '3'
 services:
-  webapp1:
+  reserve_proxy:
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - "8080:80"
+    network_mode: "service:localhost"
     container_name: reserve_proxy
+    depends_on:
+      - localhost
 
-  webapp2:
-    image: bullet_client:latest
+  bullet_client:
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
     container_name: bullet_client
+    network_mode: "service:localhost"
+    depends_on:
+      - localhost
+      - reserve_proxy
+
+  localhost:
+    image: alpine:latest
+    command: sleep infinity
+    container_name: localhost
+    

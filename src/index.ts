@@ -23,15 +23,15 @@ businessApp.get('/api/v1/player/fired_bullets', async (_: Request, res: Response
         });
     }
     catch (error) {
-        logger.error(`Failed to get account overview: ${error}`);
+        logger.error(`Failed to get fired_bullets: ${error}`);
         res.status(500).json({
             status: "error",
-            message: "Failed to get account overview."
+            message: "Failed to get fired_bullets."
         });
     }
 });
 
-businessApp.post('/player/fired_bullet', (_: Request, res: Response) => {
+businessApp.post('/api/v1/player/fired_bullet', (_: Request, res: Response) => {
 
     try {
         dbService.saveBullet();
