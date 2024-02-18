@@ -1,7 +1,13 @@
 resource "aws_ssm_parameter" "db_endpoint" {
   name  = "/${var.app_name}/db/endpoint"
   type  = "String"
-  value = aws_elasticache_serverless_cache.db.endpoint[0].address
+  value = aws_elasticache_serverless_cache.db.endpoint[0]
+}
+
+resource "aws_ssm_parameter" "db_password" {
+  name  = "/${var.app_name}/db/password"
+  type  = "String"
+  value = "no-password"
 }
 
 resource "aws_ssm_parameter" "lb_address_parameter" {
