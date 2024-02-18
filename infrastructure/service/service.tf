@@ -89,7 +89,7 @@ resource "aws_security_group" "the_service_sg" {
 
 resource "aws_ecs_service" "the_ecs_service" {
   name            = "${var.app_name}-service"
-  cluster         = "overview"
+  cluster         = local.cluster_name
   task_definition = aws_ecs_task_definition.the_task_definition.arn
   launch_type     = "FARGATE"
 
