@@ -1,13 +1,19 @@
-resource "aws_ssm_parameter" "db_endpoint" {
-  name  = "/${var.app_name}/db/endpoint"
+resource "aws_ssm_parameter" "db_host" {
+  name  = "/${var.app_name}/db/host"
   type  = "String"
-  value = aws_elasticache_serverless_cache.db.endpoint[0]
+  value = aws_elasticache_serverless_cache.db.endpoint[0].address
+}
+
+resource "aws_ssm_parameter" "db_port" {
+  name  = "/${var.app_name}/db/port"
+  type  = "String"
+  value = aws_elasticache_serverless_cache.db.endpoint[0].port
 }
 
 resource "aws_ssm_parameter" "db_password" {
   name  = "/${var.app_name}/db/password"
-  type  = "String"
-  value = "no-password"
+  type  = "SecureString"
+  value = "no-password-at-this-moment"
 }
 
 resource "aws_ssm_parameter" "lb_address_parameter" {
