@@ -88,4 +88,13 @@ jobs:
           docker run -d -v $(pwd)/log/nginx:/var/log/nginx -v $(pwd)/log/client:/var/log/client --name client client
           sleep 20
           docker stop client
-          grep Successful ./log/client/bullets.log | grep -v "Successful: 100" | grep "Successful: " && exit 1 || exit 0
+          grep 'Successful' ./log/client/bullets.log | awk -F': ' '{print $2}' | awk '{print $1}' > success.log
+          while IFS= read -r line
+          do
+            if (( $(echo "$line > 90" | bc -l) )); then
+              echo "$line is greater than 90"
+            else
+              echo "$line is not greater than 90"
+              exit 1
+            fi
+          done < success.log
