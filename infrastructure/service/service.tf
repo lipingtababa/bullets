@@ -2,8 +2,8 @@ resource "aws_ecs_task_definition" "the_task_definition" {
   family                   = "${var.app_name}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = "1024"
+  memory                   = "1024"
   execution_role_arn       = aws_iam_role.pod_role.arn
   task_role_arn            = aws_iam_role.pod_role.arn
 
@@ -11,8 +11,8 @@ resource "aws_ecs_task_definition" "the_task_definition" {
     {
       name      = "web",
       image     = "${var.aws_account}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.app_name}:${var.app_version}"
-      cpu       = 256,
-      memory    = 512,
+      cpu       = 1024,
+      memory    = 1024,
       essential = true,
       healthCheck = {
         command     = ["CMD-SHELL", "curl -f http://localhost:8081/ping || exit 1"]
