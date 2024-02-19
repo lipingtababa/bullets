@@ -85,6 +85,6 @@ jobs:
           sed "s|LB_ADDRESS_PLACEHOLDER|$lb_address|g" nginx.conf.tpl > nginx.conf
           # e2e test run in docker-compose
           docker build . -t client
-          docker run -d -v $(pwd)/log:/var/log --name client
+          docker run -d -v $(pwd)/log/nginx:/var/log/nginx -v $(pwd)/log/client:/var/log/client --name client client
           docker stop client
           grep Successful ./log/client/bullets.log | grep -v "Successful: 100" | grep "Successful: " && exit 1 || exit 0
