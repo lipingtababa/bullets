@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
-WORKDIR /usr/src/app
-COPY ./cloudEngineer_playerSimulator /usr/src/app/
+WORKDIR /app
+COPY ./cloudEngineer_playerSimulator /app
 
-# start with entrypoint.sh
-CMD ["./cloudEngineer_playerSimulator", "-debug"]
+# log into a file on the host
+CMD ["/bin/sh", "-c", "./cloudEngineer_playerSimulator > /app/log/bullets.log 2>&1"]
