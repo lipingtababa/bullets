@@ -11,6 +11,10 @@ There are 2 APIs defined in [OpenAPI manifest](./openapi.yaml)
 
 Please note that the POST endpoint doesn't take any request body.
 
+# E2E Test Suite
+There is a linux client that can send 100, 1,000 or 10,000 request per second. It is used in end-2-end integration test suite.
+
+
 # Runtime choice
 An AWS Elastic Container Service is chosed to be the runtime platform, over an Kubernetes cluster for its simplicity.
 
