@@ -77,13 +77,14 @@ jobs:
 
       - name: run e2e test suite
         run: |
-          # wait for 4 minites for the service to be up
+          # wait for 1 minite for new version to be deployed. TODO: replace with a better solution
           sleep 60
           cd test/e2e
-          echo "Running e2e tests"
           # fetch the lb address from parameter store
           lb_address=$(aws ssm get-parameter --name /${{ env.APP_NAME }}/lb/address --region ${{ env.AWS_REGION }} --query 'Parameter.Value' --output text)
           sed "s|LB_ADDRESS_PLACEHOLDER|$lb_address|g" nginx.conf.tpl > nginx.conf
+          # e2e test run in docker-compose
           docker-compose up & 
           sleep 120
+          docker-compose down
           grep Successful ./log/client/bullets.log | grep -v "Successful: 100" | grep "Successful: " && exit 1 || exit 0
