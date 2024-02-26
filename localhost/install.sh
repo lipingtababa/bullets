@@ -17,7 +17,6 @@ helm install bullets-db bitnami/redis --set auth.password='1234qwerASDF'
 
 # Use the minikube registry
 eval $(minikube docker-env)
-# Build the docker image for the client
 # Build the docker image for the app
 cd ..
 docker build -t bullets-app:latest .
@@ -27,6 +26,7 @@ cd -
 kubectl apply -f bullets-app.yaml
 
 # forward the port to the app
+mkdir ./log
 kubectl port-forward service/bullets-app-service 8080:8080 > ./log/port-forward.log 2>&1 &
 
 # Run the client with host networking
