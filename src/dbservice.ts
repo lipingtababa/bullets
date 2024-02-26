@@ -7,15 +7,25 @@ export class DBService {
   private client: Redis;
 
   constructor() {
-    this.client = new Redis({
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT || '6379'),
-      password: process.env.DB_PASSWORD,
-      username: "default",
-      tls: {
-        servername: process.env.DB_HOST
-      }
-    });
+    if ( "localhost" === process.env.AWS_REGION ) {
+      this.client = new Redis({
+        host: process.env.DB_HOST,
+        port: parseInt(process.env.DB_PORT || '6379'),
+        password: process.env.DB_PASSWORD,
+        username: "default"
+      });
+    }
+    else {
+      this.client = new Redis({
+        host: process.env.DB_HOST,
+        port: parseInt(process.env.DB_PORT || '6379'),
+        password: process.env.DB_PASSWORD,
+        username: "default",
+        tls: {
+          servername: process.env.DB_HOST
+        }
+      });
+    }
 
     this.client.on('connect', () => {
       console.log('Redis connection established.');
