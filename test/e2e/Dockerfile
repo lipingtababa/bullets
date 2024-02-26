@@ -1,5 +1,5 @@
 FROM ubuntu:latest
-RUN apt-get update && apt-get install -y nginx
+RUN apt-get update && apt-get install -y nginx curl net-tools
 
 
 WORKDIR /app
