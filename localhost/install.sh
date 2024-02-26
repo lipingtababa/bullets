@@ -8,22 +8,17 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 
 # Start minikube
-open --background -a Docker
-minikube stop && minikube delete && minikube start 
+minikube stop
+minikube delete
+minikube start
 
 # Install Redis using Helm
 helm install bullets-db bitnami/redis --set auth.password='1234qwerASDF'
 
-# This is used to replace the LB_ADDRESS_PLACEHOLDER in the nginx.conf.tpl file
-
-# Build the docker image for the client
-cd ../test/e2e
-sed "s|LB_ADDRESS_PLACEHOLDER|host.docker.internal|g" nginx.conf.tpl > nginx.conf
-docker build -t bullets-client:latest .
-cd -
-
-# Build the docker image for the app
+# Use the minikube registry
 eval $(minikube docker-env)
+# Build the docker image for the client
+# Build the docker image for the app
 cd ..
 docker build -t bullets-app:latest .
 cd -
@@ -32,10 +27,15 @@ cd -
 kubectl apply -f bullets-app.yaml
 
 # forward the port to the app
-kubectl port-forward service/bullets-app-service 8080:8080 &
+kubectl port-forward service/bullets-app-service 8080:8080 > ./log/port-forward.log 2>&1 &
 
 # Run the client with host networking
 
-docker run -d -v $(pwd)/log/nginx:/var/log/nginx -v $(pwd)/log/client:/var/log/client --name client bullets-client
+cd ../test/e2e
+docker build -t bullets-client:latest .
+cd -
 
-tail -f log/client/bullets.log
+docker rm -f client
+docker run -d --env "LB_ADDRESS=host.docker.internal" --name client bullets-client
+
+docker logs -f client

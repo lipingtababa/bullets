@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y nginx
 
 WORKDIR /app
 COPY ./cloudEngineer_playerSimulator /app
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx.conf.tpl /app/nginx.conf.tpl
+COPY ./entrypoint.sh /app/entrypoint.sh
 
-CMD ["/bin/sh", "-c", "service nginx start && ./cloudEngineer_playerSimulator -players 100 -debug > /var/log/client/bullets.log 2>&1"]
+CMD ["/app/entrypoint.sh"]

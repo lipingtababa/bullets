@@ -18,9 +18,7 @@ businessApp.get('/api/v1/player/fired_bullets', async (_: Request, res: Response
     try {
         const total = await dbService.getBulletNumber();
 
-        res.json({
-            fired_bullet: total
-        });
+        res.json(total);
     }
     catch (error) {
         logger.error(`Failed to get fired_bullets: ${error}`);

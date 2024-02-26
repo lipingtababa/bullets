@@ -81,14 +81,15 @@ jobs:
           sleep 60
           cd test/e2e
           # fetch the lb address from parameter store
-          lb_address=$(aws ssm get-parameter --name /${{ env.APP_NAME }}/lb/address --region ${{ env.AWS_REGION }} --query 'Parameter.Value' --output text)
-          sed "s|LB_ADDRESS_PLACEHOLDER|$lb_address|g" nginx.conf.tpl > nginx.conf
-          # e2e test run in docker-compose
-          docker build . -t client
-          docker run -d -v $(pwd)/log/nginx:/var/log/nginx -v $(pwd)/log/client:/var/log/client --name client client
-          sleep 20
+          LB_ADDRESS=$(aws ssm get-parameter --name /${{ env.APP_NAME }}/lb/address --region ${{ env.AWS_REGION }} --query 'Parameter.Value' --output text)
+          
+          # Run the e2e test suite in a docker container
+          docker build . -t bullets-client
+          docker run -d --env "LB_ADDRESS=$LB_ADDRESS" --name client bullets-client
+          sleep 10
+          docker logs client > ./bullets.log
           docker stop client
-          grep 'Successful' ./log/client/bullets.log | awk -F': ' '{print $2}' | awk '{print $1}' > success.log
+          grep 'Successful' ./bullets.log | awk -F': ' '{print $2}' | awk '{print $1}' > success.log
           while IFS= read -r line
           do
             if (( $(echo "$line > 90" | bc -l) )); then
