@@ -7,8 +7,7 @@ There are 2 APIs defined in [OpenAPI manifest](./openapi.yaml)
 
 Please note that the POST endpoint doesn't take any request body.
 
-There are 2 implementations for this project.
-While the implementation with Minikube is a direct answer to the case study, I personally prefer the implementation with AWS ECS.
+There are 2 implementations for this project. While the implementation with Minikube is a direct answer to the case study, I personally prefer the implementation with AWS ECS.
 
 # Implementation with Minikube on MacOS
 The [installation script](./localhost/install.sh) installs:
@@ -17,23 +16,24 @@ The [installation script](./localhost/install.sh) installs:
 - a docker container for the client
 
 
-# Implementation with AWS ECS
+# Implementation with ECS on AWS
 
 ## Components
-This solution includes
+This solution includes:
 - A CI/CD pipeline on Github Actions.
 - An E2E test suite.
-- An Service on AWS ECS
-
+- An Service on AWS ECS.
 
 ## CI/CD
-Any changes to the platform, the configuration, or the service itself requires one and only one PR to the repo. There is no need to log into any console or to invoke any CLI from his/her notebook. The [github actions' workflow](./.github/workflows/service.yml) will apply any changes introduced by the PR automatically.
+Any changes to the platform, the configuration, or the service itself requires one and only one PR to the repo. 
 
-Compared to an installer script, this CI/CD pipeline: 
+There is no need to log into any console or to invoke any CLI from a notebook. The [github actions' workflow](./.github/workflows/service.yml) will apply any changes introduced by the PR automatically.
+
+Compared to the installer script, this CI/CD pipeline: 
 - is tested.
 - is version controlled.
-- is managed by Github, which means that we don't have to do the maintenance ourselves.
-- integrates with Github and [AWS](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) well.
+- use nodes managed by Github, which means that we don't have to maintain the infra for the piepeline ourselves.
+- integrates with [AWS](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) well.
 
 ## E2E Test Suite
 There is a linux client that can send 100, 1,000 or 10,000 request per second. It is used in [the end-2-end integration test suite](./test/e2e/Dockerfile), which in turn is invoked in CI/CD workflow.
