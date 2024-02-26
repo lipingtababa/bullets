@@ -88,7 +88,7 @@ jobs:
           docker run -d --env "LB_ADDRESS=$LB_ADDRESS" --name client bullets-client
           sleep 10
           docker logs client > ./bullets.log
-          docker stop client
+          cat ./bullets.log
           grep 'Successful' ./bullets.log | awk -F': ' '{print $2}' | awk '{print $1}' > success.log
           while IFS= read -r line
           do
