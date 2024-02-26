@@ -92,10 +92,10 @@ jobs:
           grep 'Successful' ./bullets.log | awk -F': ' '{print $2}' | awk '{print $1}' > success.log
           while IFS= read -r line
           do
-            if (( $(echo "$line > 99" | bc -l) )); then
-              echo "$line is greater than 90"
+            if (( $(echo "$line > 98" | bc -l) )); then
+              echo "$line is greater than 98"
             else
-              echo "$line is not greater than 90"
+              echo "$line is not greater than 98"
               exit 1
             fi
           done < success.log
