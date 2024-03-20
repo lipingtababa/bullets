@@ -64,7 +64,7 @@ jobs:
             ${{ env.DEPLOYMENT_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.APP_NAME }}/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
         
       - name: substitute variables in deployment.yaml
-        uses: danielr1996/envsubst-action
+        uses: danielr1996/envsubst-action@1.1.0
         with:
           input: infrastructure/gcp/service/deployment.yaml.tpl
           output: infrastructure/gcp/service/deployment.yaml
