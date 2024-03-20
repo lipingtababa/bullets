@@ -1,0 +1,83 @@
+name: Provision service on gcp
+run-name: Provisioning ${{ github.repository }} onto GCP
+permissions:
+    id-token: write
+    contents: read
+on: 
+  push:
+    branches:
+      - main
+env:
+  DEPLOYMENT_REGION: us-central1
+  STAGE: dev
+  PROJECT_ID: jkmsimulator
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v4
+
+      - name: Configure GCP credentials
+        uses: 'google-github-actions/auth@v2'
+        with:
+            project_id: ${{env.PROJECT_ID}}
+            credentials_json: '${{ secrets.GCP_JKMSIMULATOR_SECRET }}'
+
+      - name: linting and unit testing
+        run: |
+          echo "Running linting"
+          yarn install
+          yarn lint
+
+      - name: Prepare environment
+        run: |
+          echo ${{ env.DEPLOYMENT_REGION }}
+          echo ${{ env.STAGE }}
+
+          # set environment variables for the next steps
+          APP_NAME=`echo ${{ github.repository }} | cut -d'/' -f2`
+          echo "APP_NAME=${APP_NAME}"
+          echo "APP_NAME=${APP_NAME}" >> $GITHUB_ENV
+
+          APP_VERSION=`echo ${{ github.sha }} | cut -c1-7`
+          echo "APP_VERSION=${APP_VERSION}"
+          echo "APP_VERSION=${APP_VERSION}" >> $GITHUB_ENV
+
+      - name: create shared resources
+        run: |
+          cd infrastructure/gcp/shared
+          sed "s|APP_NAME_PLACEHOLDER|$APP_NAME|g" provider.tf.tpl > provider.tf
+          terraform init
+          terraform apply -auto-approve \
+                -var "app_name=${{ env.APP_NAME }}"
+
+      - name: push image to docker image registry
+        run: |
+          gcloud auth configure-docker ${{ env.DEPLOYMENT_REGION }}-docker.pkg.dev
+          docker build -t ${{ env.APP_NAME }}:${{ env.APP_VERSION }} .
+          docker tag ${{ env.APP_NAME }}:${{ env.APP_VERSION }} \
+            ${{ env.DEPLOYMENT_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.APP_NAME }}/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
+
+          docker push \
+            ${{ env.DEPLOYMENT_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.APP_NAME }}/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
+        
+      - name: substitute variables in deployment.yaml
+        uses: danielr1996/envsubst-action
+        with:
+          input: infrastructure/gcp/service/deployment.yaml.tpl
+          output: infrastructure/gcp/service/deployment.yaml
+
+      - name: apply the deployment
+        run: |
+          cd infrastructure/gcp/service
+          gcloud container clusters get-credentials jkm --region ${{ env.DEPLOYMENT_REGION }} --project ${{ env.APP_NAME }}
+          kubectl apply -f deployment.yaml
+
+      - name: run e2e test suite
+        run: |
+          # wait for 1 minite for new version to be deployed. TODO: replace with a better solution
+          sleep 60
+          cd test/e2e
+          # todo: run e2e tests
