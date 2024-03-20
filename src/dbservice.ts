@@ -7,7 +7,7 @@ export class DBService {
   private client: Redis;
 
   constructor() {
-    if ( "localhost" === process.env.AWS_REGION ) {
+    if ( "localhost" === process.env.DEPLOYMENT_REGION ) {
       this.client = new Redis({
         host: process.env.DB_HOST,
         port: parseInt(process.env.DB_PORT || '6379'),

@@ -1,8 +1,3 @@
-provider "google" {
-  project = "jkmsimulator"
-  region  = "us-central1"
-}
-
 resource "google_container_cluster" "cluster" {
   name               = "jkm"
   location           = "us-central1"

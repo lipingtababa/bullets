@@ -6,7 +6,7 @@ import AWS from 'aws-sdk';
 const PORT = 8080;
 const HEALTHCHECK_PORT = 8081;
 
-AWS.config.update({region: process.env.AWS_REGION});
+AWS.config.update({region: process.env.DEPLOYMENT_REGION});
 
 export const businessApp = express();
 businessApp.use(express.json());
@@ -52,7 +52,7 @@ const healthcheckFunction =  (req: Request, res: Response) => {
         status: "success",
         app_name: process.env.APP_NAME,
         app_version: process.env.APP_VERSION,
-        aws_region: process.env.AWS_REGION,
+        deployment_region: process.env.DEPLOYMENT_REGION,
         stage: process.env.STAGE
     });
 }

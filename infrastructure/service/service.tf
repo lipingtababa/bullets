@@ -10,7 +10,7 @@ resource "aws_ecs_task_definition" "the_task_definition" {
   container_definitions = jsonencode([
     {
       name      = "web",
-      image     = "${var.aws_account}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.app_name}:${var.app_version}"
+      image     = "${var.aws_account}.dkr.ecr.${var.deployment_region}.amazonaws.com/${var.app_name}:${var.app_version}"
       cpu       = 512,
       memory    = 1024,
       essential = true,
@@ -25,7 +25,7 @@ resource "aws_ecs_task_definition" "the_task_definition" {
         logDriver = "awslogs",
         options   = {
           "awslogs-group"         = "/ecs/${var.app_name}",
-          "awslogs-region"        = "${var.aws_region}",
+          "awslogs-region"        = "${var.deployment_region}",
           "awslogs-stream-prefix" = "web"
         }
       },
@@ -43,8 +43,8 @@ resource "aws_ecs_task_definition" "the_task_definition" {
       ],
       environment = [
         {
-          name  = "AWS_REGION"
-          value = "${var.aws_region}"
+          name  = "DEPLOYMENT_REGION"
+          value = "${var.deployment_region}"
         },
         {
           name  = "AWS_ACCOUNT"

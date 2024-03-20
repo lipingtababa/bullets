@@ -37,7 +37,7 @@ resource "aws_iam_policy" "parameter_store_policy" {
           "ssm:DescribeParameter",
           "kms:Decrypt"
         ],
-        Resource = "arn:aws:ssm:${var.aws_region}:${var.aws_account}:parameter/${var.app_name}/*"
+        Resource = "arn:aws:ssm:${var.deployment_region}:${var.aws_account}:parameter/${var.app_name}/*"
       }
     ]
   })

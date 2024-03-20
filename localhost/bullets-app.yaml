@@ -19,7 +19,7 @@ spec:
         ports:
         - containerPort: 8080
         env:
-        - name: AWS_REGION
+        - name: DEPLOYMENT_REGION
           value: "localhost"
         - name: DB_HOST
           value: "bullets-db-redis-master"

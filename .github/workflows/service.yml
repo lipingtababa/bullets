@@ -9,7 +9,7 @@ on:
     branches:
       - main
 env:
-  AWS_REGION: us-east-1
+  DEPLOYMENT_REGION: us-east-1
   AWS_ACCOUNT: 339713007259
   STAGE: dev
 
@@ -25,7 +25,7 @@ jobs:
         with:
           role-to-assume: "arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/github-actions-admin"
           role-session-name: github
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ env.DEPLOYMENT_REGION }}
       
       - name: linting and unit testing
         run: |
@@ -35,7 +35,7 @@ jobs:
 
       - name: Prepare environment
         run: |
-          echo ${{ env.AWS_REGION }}
+          echo ${{ env.DEPLOYMENT_REGION }}
           echo ${{ env.AWS_ACCOUNT }}
           echo ${{ env.STAGE }}
 
@@ -58,10 +58,10 @@ jobs:
 
       - name: push image to ECR
         run: |
-          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          aws ecr get-login-password --region ${{ env.DEPLOYMENT_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT }}.dkr.ecr.${{ env.DEPLOYMENT_REGION }}.amazonaws.com
           docker build -t ${{ env.APP_NAME }} .
-          docker tag ${{ env.APP_NAME }}:latest ${{ env.AWS_ACCOUNT }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
-          docker push                           ${{ env.AWS_ACCOUNT }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
+          docker tag ${{ env.APP_NAME }}:latest ${{ env.AWS_ACCOUNT }}.dkr.ecr.${{ env.DEPLOYMENT_REGION }}.amazonaws.com/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
+          docker push                           ${{ env.AWS_ACCOUNT }}.dkr.ecr.${{ env.DEPLOYMENT_REGION }}.amazonaws.com/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
 
       - name: Update infrastructure and service
         run: |
@@ -69,7 +69,7 @@ jobs:
           sed "s|APP_NAME_PLACEHOLDER|$APP_NAME|g" provider.tf.tpl > provider.tf
           terraform init
           terraform apply -auto-approve \
-                -var "aws_region=${{ env.AWS_REGION }}" \
+                -var "deployment_region=${{ env.DEPLOYMENT_REGION }}" \
                 -var "aws_account=${{ env.AWS_ACCOUNT }}" \
                 -var "stage=${{ env.STAGE}}" \
                 -var "app_version=${{ env.APP_VERSION }}" \
@@ -81,7 +81,7 @@ jobs:
           sleep 60
           cd test/e2e
           # fetch the lb address from parameter store
-          LB_ADDRESS=$(aws ssm get-parameter --name /${{ env.APP_NAME }}/lb/address --region ${{ env.AWS_REGION }} --query 'Parameter.Value' --output text)
+          LB_ADDRESS=$(aws ssm get-parameter --name /${{ env.APP_NAME }}/lb/address --region ${{ env.DEPLOYMENT_REGION }} --query 'Parameter.Value' --output text)
           
           # Run the e2e test suite in a docker container
           docker build . -t bullets-client
