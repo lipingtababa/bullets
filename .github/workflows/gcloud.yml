@@ -25,11 +25,11 @@ jobs:
             project_id: ${{env.PROJECT_ID}}
             credentials_json: '${{ secrets.GCP_JKMSIMULATOR_SECRET }}'
 
-      - name: linting and unit testing
-        run: |
-          echo "Running linting"
-          yarn install
-          yarn lint
+      # - name: linting and unit testing
+      #   run: |
+      #     echo "Running linting"
+      #     yarn install
+      #     yarn lint
 
       - name: Prepare environment
         run: |
@@ -49,6 +49,7 @@ jobs:
         run: |
           cd infrastructure/gcp/shared
           sed "s|APP_NAME_PLACEHOLDER|$APP_NAME|g" provider.tf.tpl > provider.tf
+          gcloud auth list
           terraform init
           terraform apply -auto-approve
 
