@@ -1,7 +1,6 @@
 resource "google_container_cluster" "cluster" {
   name               = "shared-cluster"
   location           = "us-central1"
-  initial_node_count = 1
 
   enable_autopilot = true
   deletion_protection = false
