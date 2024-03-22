@@ -50,8 +50,7 @@ jobs:
           cd infrastructure/gcp/shared
           sed "s|APP_NAME_PLACEHOLDER|$APP_NAME|g" provider.tf.tpl > provider.tf
           terraform init
-          terraform apply -auto-approve \
-                -var "app_name=${{ env.APP_NAME }}"
+          terraform apply -auto-approve
 
       - name: push image to docker image registry
         run: |
