@@ -25,6 +25,11 @@ jobs:
             project_id: ${{env.PROJECT_ID}}
             credentials_json: '${{ secrets.GCP_JKMSIMULATOR_SECRET }}'
 
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
+
       # - name: linting and unit testing
       #   run: |
       #     echo "Running linting"
@@ -46,10 +51,14 @@ jobs:
           echo "APP_VERSION=${APP_VERSION}" >> $GITHUB_ENV
 
       - name: create shared resources
+
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /path/to/creds.json
         run: |
           cd infrastructure/gcp/shared
           sed "s|APP_NAME_PLACEHOLDER|$APP_NAME|g" provider.tf.tpl > provider.tf
           gcloud auth list
+
           terraform init
           terraform apply -auto-approve
 
