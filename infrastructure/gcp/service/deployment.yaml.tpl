@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: bullets-app
-        image: ${DEPLOYMENT_REGION}-docker.pkg.dev/${PROJECT_ID}/${APP_NAME}/${APP_NAME}:${APP_VERSION}
-        imagePullPolicy: Never
+        image: ${DEPLOYMENT_REGION}-docker.pkg.dev/${PROJECT_ID}/shared-repository/${APP_NAME}:${APP_VERSION}
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:

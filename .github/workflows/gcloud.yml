@@ -67,10 +67,10 @@ jobs:
           gcloud auth configure-docker ${{ env.DEPLOYMENT_REGION }}-docker.pkg.dev
           docker build -t ${{ env.APP_NAME }}:${{ env.APP_VERSION }} .
           docker tag ${{ env.APP_NAME }}:${{ env.APP_VERSION }} \
-            ${{ env.DEPLOYMENT_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.APP_NAME }}/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
+            ${{ env.DEPLOYMENT_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/shared-repository/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
 
           docker push \
-            ${{ env.DEPLOYMENT_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.APP_NAME }}/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
+            ${{ env.DEPLOYMENT_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/shared-repository/${{ env.APP_NAME }}:${{ env.APP_VERSION }}
         
       - name: substitute variables in deployment.yaml
         uses: danielr1996/envsubst-action@1.1.0
