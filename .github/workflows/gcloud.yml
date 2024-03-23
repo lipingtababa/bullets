@@ -78,7 +78,7 @@ jobs:
       - name: apply the deployment
         run: |
           cd infrastructure/gcp/service
-          gcloud container clusters get-credentials jkm --region ${{ env.DEPLOYMENT_REGION }} --project ${{ env.APP_NAME }}
+          gcloud container clusters get-credentials shared-cluster --region ${{ env.DEPLOYMENT_REGION }} --project ${{ env.PROJECT_ID }}
           kubectl apply -f deployment.yaml
 
       - name: run e2e test suite
