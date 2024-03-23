@@ -6,7 +6,7 @@ permissions:
 on: 
   push:
     branches:
-      - main
+      - gcp
 env:
   DEPLOYMENT_REGION: us-central1
   STAGE: dev

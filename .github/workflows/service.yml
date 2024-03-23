@@ -7,7 +7,7 @@ on:
   # Deploy ECS cluster, ECS service and dependencies(DB) for an environment    
   push:
     branches:
-      - main
+      - aws
 env:
   DEPLOYMENT_REGION: us-east-1
   AWS_ACCOUNT: 339713007259
