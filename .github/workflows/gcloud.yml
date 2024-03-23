@@ -50,11 +50,14 @@ jobs:
           echo "APP_VERSION=${APP_VERSION}"
           echo "APP_VERSION=${APP_VERSION}" >> $GITHUB_ENV
 
+          gcloud auth list
+          gcloud components install gke-gcloud-auth-plugin
+
       - name: create shared resources
         run: |
           cd infrastructure/gcp/shared
           sed "s|APP_NAME_PLACEHOLDER|$APP_NAME|g" provider.tf.tpl > provider.tf
-          gcloud auth list
+          
 
           terraform init
           terraform apply -auto-approve
